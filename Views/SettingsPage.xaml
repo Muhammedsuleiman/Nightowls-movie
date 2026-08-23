@@ -1,0 +1,168 @@
+<UserControl x:Class="NightOwls.Views.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="28,10,28,26" MaxWidth="860" HorizontalAlignment="Left">
+
+            <TextBlock Text="Settings" FontSize="24" FontWeight="Light" Foreground="{StaticResource BrushTextPrimary}" Margin="0,4,0,18"/>
+
+            <Border CornerRadius="12" Padding="22,18" Background="{StaticResource BrushSurface}"
+                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" Margin="0,0,0,16">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock Text="Library Locations" Style="{StaticResource SectionHeader}"/>
+                        <Button Style="{StaticResource GoldButton}" Margin="14,0,0,0" Padding="13,7"
+                                Command="{Binding AddFolderCommand}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="{StaticResource FontIcons}" Text="&#xE710;" FontSize="12" VerticalAlignment="Center"/>
+                                <TextBlock Text="Add folder" Margin="7,0,0,0"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource OutlineButton}" Margin="10,0,0,0" Padding="13,7"
+                                Command="{Binding ScanAllLocationsCommand}">
+                            <TextBlock Text="Scan all locations"/>
+                        </Button>
+                    </StackPanel>
+
+                    <ItemsControl ItemsSource="{Binding Locations}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="{StaticResource BrushCard}" CornerRadius="9" Padding="14,10"
+                                        Margin="0,6,0,0">
+                                    <DockPanel LastChildFill="True">
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Style="{StaticResource GhostIconButton}" Command="{Binding DataContext.ScanFolderCommand,
+                                                        RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
+                                                    ToolTip="Scan this location only" Content="&#xE72C;"
+                                                    FontFamily="{StaticResource FontIcons}" FontSize="13"/>
+                                            <Button Style="{StaticResource GhostIconButton}" Command="{Binding DataContext.RemoveFolderCommand,
+                                                        RelativeSource={RelativeSource AncestorType=ItemsControl}}" CommandParameter="{Binding}"
+                                                    ToolTip="Remove this location" Foreground="{StaticResource BrushDanger}"
+                                                    FontFamily="{StaticResource FontIcons}" FontSize="13" Content="&#xE74D;"/>
+                                        </StackPanel>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Path}" FontSize="13"
+                                                       Foreground="{StaticResource BrushTextPrimary}" TextTrimming="CharacterEllipsis"/>
+                                            <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                                <Ellipse Width="8" Height="8" VerticalAlignment="Center">
+                                                    <Ellipse.Style>
+                                                        <Style TargetType="Ellipse">
+                                                            <Setter Property="Fill" Value="#FF5CC98A"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsUnavailable}" Value="True">
+                                                                    <Setter Property="Fill" Value="{StaticResource BrushDanger}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Ellipse.Style>
+                                                </Ellipse>
+                                                <TextBlock FontSize="11" Margin="7,0,0,0" Foreground="{StaticResource BrushTextSecondary}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="Available"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsUnavailable}" Value="True">
+                                                                    <Setter Property="Text" Value="Drive offline — reconnect it and scan again"/>
+                                                                    <Setter Property="Foreground" Value="{StaticResource BrushDanger}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock Text="No library locations configured yet. Add a folder or a whole drive to get started."
+                               Style="{StaticResource MutedText}" Margin="2,10,0,0"
+                               Visibility="{Binding HasLocations, Converter={StaticResource BoolToVisCInverted}}"/>
+                </StackPanel>
+            </Border>
+
+            <Border CornerRadius="12" Padding="22,18" Background="{StaticResource BrushSurface}"
+                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Playback" Style="{StaticResource SectionHeader}"/>
+
+                    <Grid Margin="0,4,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="240"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Default volume" Style="{StaticResource MutedText}" VerticalAlignment="Center"/>
+                        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal">
+                            <Slider Minimum="0" Maximum="125" Value="{Binding DefaultVolume}" Width="220"
+                                    Style="{StaticResource PlayerSlider}" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding DefaultVolume, StringFormat={}{0}%}" Margin="12,0,0,0"
+                                       Foreground="{StaticResource BrushTextPrimary}" FontSize="12" VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="When reopening an unfinished movie" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="0,12,0,0"/>
+                        <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding ResumeOptions}"
+                                  SelectedItem="{Binding ResumeBehavior}" MinWidth="210" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Skip forward duration" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="0,12,0,0"/>
+                        <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding SkipChoices}"
+                                  SelectedItem="{Binding SkipForwardSeconds}" MinWidth="110" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Skip backward duration" Style="{StaticResource MutedText}" VerticalAlignment="Center" Margin="0,12,0,0"/>
+                        <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding SkipChoices}"
+                                  SelectedItem="{Binding SkipBackwardSeconds}" MinWidth="110" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border CornerRadius="12" Padding="22,18" Background="{StaticResource BrushSurface}"
+                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="Data" Style="{StaticResource SectionHeader}"/>
+                    <WrapPanel>
+                        <Button Style="{StaticResource OutlineButton}" Padding="13,7" Command="{Binding ClearThumbnailCacheCommand}">
+                            <TextBlock Text="Clear thumbnail cache"/>
+                        </Button>
+                        <Button Style="{StaticResource OutlineButton}" Padding="13,7" Margin="10,0,0,0" Command="{Binding ClearRecentlyWatchedCommand}">
+                            <TextBlock Text="Clear recently watched"/>
+                        </Button>
+                        <Button Style="{StaticResource OutlineButton}" Padding="13,7" Margin="10,0,0,0" Command="{Binding ClearPlaybackHistoryCommand}">
+                            <TextBlock Text="Clear playback history"/>
+                        </Button>
+                        <Button Style="{StaticResource DangerButton}" Padding="13,7" Margin="10,0,0,0" Command="{Binding ClearFavoritesCommand}">
+                            <TextBlock Text="Clear favorites"/>
+                        </Button>
+                    </WrapPanel>
+                    <TextBlock Style="{StaticResource MutedText}" Margin="2,12,0,0">
+                        All data is stored locally in<Run Text=" "/><Run Text="{Binding DataFolder, Mode=OneWay}"/>.
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+
+            <Border CornerRadius="12" Padding="22,18" Background="{StaticResource BrushSurface}"
+                    BorderBrush="{StaticResource BrushBorder}" BorderThickness="1">
+                <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontFamily="{StaticResource FontIcons}" Text="&#xE708;" FontSize="20"
+                                   Foreground="{StaticResource BrushGold}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding AppVersion}" FontSize="15" FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushTextPrimary}" VerticalAlignment="Center" Margin="11,0,0,0"/>
+                    </StackPanel>
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,9,0,0"
+                               Text="A completely offline Windows desktop movie player for your local video files."/>
+                    <TextBlock Style="{StaticResource MutedText}" Margin="0,5,0,0"
+                               Text="Movie titles are derived from your local filenames. Thumbnails are generated on this machine from the videos themselves. No internet connection is used or required."/>
+                </StackPanel>
+            </Border>
+
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>
